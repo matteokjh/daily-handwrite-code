@@ -5,12 +5,13 @@
 // 3. this
 // 4. return
 
-const myNew = (Fn: any, ...args: any) => {
-    let res = {} as any
+const myNew = <Args extends Array<any>, Instance extends object>(Fn: new (..._: Args) => Instance, ...args: Args): Instance => {
+    let res: Instance = {} as any
     if(Fn.prototype !== null) {
+        // @ts-ignore
         res.__proto__ = Fn.prototype
     }
-    let rec = Fn.apply(res,args)
+    let rec = Fn.apply(res,args) as any
     if((typeof rec === 'object' || typeof rec === 'function') && rec !== null) {
         return rec
     }
@@ -41,3 +42,19 @@ a.sayName()
 a.sayAge()
 
 // let b = new A('james',18)
+
+class C {
+    c: number
+    constructor(num: number){
+        this.c = num
+    }
+}
+let d = {
+
+}
+C.call(d,1111) // newable
+
+function D(this: any, num: number) {
+    this.d = num
+}
+D.call(d,999) // callable
